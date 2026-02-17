@@ -2,7 +2,7 @@
 
 An [Obsidian](https://obsidian.md) plugin that collects every checkbox task from your vault into a right-sidebar panel — grouped by file and heading, filterable, and fully interactive.
 
-![screenshot](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/main/docs/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/master/docs/screenshot.png)
 
 ---
 
