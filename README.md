@@ -2,7 +2,7 @@
 
 An [Obsidian](https://obsidian.md) plugin that collects every checkbox task from your vault into a right-sidebar panel — grouped by file and heading, filterable, and fully interactive.
 
-![screenshot](https://raw.githubusercontent.com/your-github-username/obsidian-sidebar-task-hub/main/docs/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/main/docs/screenshot.png)
 
 ---
 
@@ -62,11 +62,11 @@ Go to **Settings → Community plugins → Sidebar Task Hub**.
 ### Via BRAT (beta testing)
 
 1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat)
-2. In BRAT settings, add: `your-github-username/obsidian-sidebar-task-hub`
+2. In BRAT settings, add: `kamil-bartczak/obsidian-sidebar-task-hub`
 
 ### Manual
 
-1. Download `main.js`, `styles.css`, and `manifest.json` from the [latest release](https://github.com/your-github-username/obsidian-sidebar-task-hub/releases/latest)
+1. Download `main.js`, `styles.css`, and `manifest.json` from the [latest release](https://github.com/kamil-bartczak/obsidian-sidebar-task-hub/releases/latest)
 2. Copy them to `<YourVault>/.obsidian/plugins/sidebar-task-hub/`
 3. Reload Obsidian and enable the plugin under **Settings → Community plugins**
 
@@ -75,7 +75,7 @@ Go to **Settings → Community plugins → Sidebar Task Hub**.
 ## Development
 
 ```bash
-git clone https://github.com/your-github-username/obsidian-sidebar-task-hub
+git clone https://github.com/kamil-bartczak/obsidian-sidebar-task-hub
 cd obsidian-sidebar-task-hub
 npm install
 npm run dev      # watch mode
