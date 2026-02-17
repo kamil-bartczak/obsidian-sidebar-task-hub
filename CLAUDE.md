@@ -1,0 +1,47 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+```bash
+npm install          # Install dependencies
+npm run dev          # Watch mode (incremental builds during development)
+npm run build        # Type-check + production build (minified main.js)
+npm run lint         # Run ESLint across src/
+```
+
+**After every code change, always run `npm run build` and fix any errors before considering the task done.**
+
+There is no automated test suite. Manual testing requires copying `main.js`, `manifest.json`, and `styles.css` to `<Vault>/.obsidian/plugins/sidebar-task-hub/`, then reloading Obsidian and enabling the plugin under **Settings → Community plugins**.
+
+## Architecture
+
+This is an Obsidian community plugin. TypeScript source in `src/` is bundled by esbuild into a single `main.js` at the repo root. Obsidian loads `main.js` directly.
+
+### Source files
+
+- **`src/main.ts`** — Plugin entry point. Registers the view type, ribbon icon, and the `open-task-hub-right` command. Should stay minimal; delegate all feature logic to other modules.
+- **`src/view.ts`** — Contains `TaskHubView` (extends Obsidian's `ItemView`) and the standalone `scanAllTasks()` function. Handles all state (task list, filter text, show-done toggle), vault file watchers, UI rendering, and navigation to task locations.
+
+### Data flow
+
+1. Plugin loads → registers `TaskHubView` with ID `"task-hub-view"` → auto-activates it.
+2. View opens → registers vault events (`modify`, `create`, `delete`, `rename`) → calls `scanAllTasks()`.
+3. `scanAllTasks()` reads every `.md` file and extracts lines matching `^\s*-\s*\[( |x|X)\]\s+(.+)$`, returning `TaskItem[]` (each with `filePath`, `line`, `raw`, `done`).
+4. `render()` builds the DOM: filter input, show-done checkbox, and a list of task items.
+5. Clicking a task calls `openAtTask()`, which opens the file in the editor and scrolls/positions the cursor to the exact line.
+6. Vault changes trigger `refresh()` → rescan → re-render.
+
+### Key conventions
+
+- Use `this.registerEvent(...)`, `this.registerDomEvent(...)`, and `this.registerInterval(...)` for all listeners so they're cleaned up on unload.
+- Avoid Node/Electron APIs to preserve mobile compatibility (`isDesktopOnly: false`).
+- Keep `main.ts` lifecycle-only; split new features into separate `src/` modules.
+- Debounce expensive vault-scan operations triggered by file system events.
+- Settings persistence: `this.loadData()` / `this.saveData()`.
+- Command IDs are stable API — never rename them after release.
+
+### Release artifacts
+
+Only `main.js`, `manifest.json`, and `styles.css` are needed. Never commit `main.js` or `node_modules/` (both in `.gitignore`). To release: bump version in `manifest.json` and `versions.json` (or run `npm version`), then attach the three artifacts to a GitHub release tagged with the bare version number (no `v` prefix).

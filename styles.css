@@ -1,0 +1,241 @@
+/* ── Sidebar Task Hub ───────────────────────────────────────────────────── */
+
+.task-hub-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: var(--size-2-3);
+  box-sizing: border-box;
+}
+
+/* Controls */
+.task-hub-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-2);
+  margin-bottom: var(--size-2-3);
+  flex-shrink: 0;
+}
+
+.task-hub-toggle-row label {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
+  font-size: var(--font-smaller);
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Scrollable list */
+.task-hub-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2-1);
+}
+
+/* Empty state */
+.task-hub-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--size-2-2);
+  padding: var(--size-4-4);
+  color: var(--text-faint);
+  font-size: var(--font-small);
+}
+
+/* ── Shared chevron ─────────────────────────────────────────────────────── */
+
+.task-hub-chevron {
+  display: flex;
+  align-items: center;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.task-hub-chevron svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Shared badge */
+.task-hub-badge {
+  font-size: var(--font-smaller);
+  color: var(--text-faint);
+  background: var(--background-modifier-border);
+  border-radius: 999px;
+  padding: 0 var(--size-2-2);
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+/* ── File group ─────────────────────────────────────────────────────────── */
+
+.task-hub-file-group {
+  border-radius: var(--radius-m);
+}
+
+.task-hub-file-group[open] > summary .task-hub-chevron {
+  transform: rotate(90deg);
+}
+
+.task-hub-file-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
+  padding: var(--size-2-2) var(--size-2-3);
+  font-size: var(--font-small);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-m);
+  background: var(--background-secondary);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.task-hub-file-summary::-webkit-details-marker {
+  display: none;
+}
+
+.task-hub-file-summary:hover {
+  background: var(--background-modifier-hover);
+}
+
+.task-hub-file-icon {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.task-hub-file-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.task-hub-file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Body of the file group (contains heading groups and/or bare task lists) */
+.task-hub-file-body {
+  padding-left: var(--size-4-2);
+}
+
+/* ── Heading group ──────────────────────────────────────────────────────── */
+
+.task-hub-heading-group {
+  border-radius: var(--radius-s);
+}
+
+.task-hub-heading-group[open] > summary .task-hub-chevron {
+  transform: rotate(90deg);
+}
+
+.task-hub-heading-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2-2);
+  padding: var(--size-2-1) var(--size-2-2);
+  font-size: var(--font-small);
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.task-hub-heading-summary::-webkit-details-marker {
+  display: none;
+}
+
+.task-hub-heading-summary:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.task-hub-heading-icon {
+  display: flex;
+  align-items: center;
+  color: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.task-hub-heading-icon svg {
+  width: 13px;
+  height: 13px;
+}
+
+.task-hub-heading-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Task items ─────────────────────────────────────────────────────────── */
+
+.task-hub-items {
+  list-style: none;
+  margin: 0;
+  padding: var(--size-2-1) 0 var(--size-2-1) var(--size-4-4);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tasks directly under file body (no heading) get slightly less indent */
+.task-hub-file-body > .task-hub-items {
+  padding-left: var(--size-4-2);
+}
+
+.task-hub-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-2-2);
+  padding: var(--size-2-1) var(--size-2-2);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  font-size: var(--font-small);
+  line-height: var(--line-height-normal);
+}
+
+.task-hub-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.task-hub-check {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+.task-hub-check svg {
+  width: 14px;
+  height: 14px;
+}
+
+.task-hub-item.is-done .task-hub-check {
+  color: var(--checkbox-color, var(--interactive-accent));
+}
+
+.task-hub-item.is-done .task-hub-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-hub-text {
+  flex: 1;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
