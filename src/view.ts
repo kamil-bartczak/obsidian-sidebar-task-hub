@@ -341,11 +341,11 @@ async function scanAllTasks(plugin: SidebarTaskHubPlugin): Promise<TaskItem[]> {
         continue;
       }
 
-      const tm = /^\s*-\s*\[([ xX])\]\s+(.+)$/.exec(line);
+      const tm = /^\s*[-*+]\s*\[([ xX])\]\s+(.+)$/.exec(line);
       if (!tm) continue;
 
       // Column where the task text starts (after "- [ ] " prefix)
-      const prefixMatch = /^\s*-\s*\[[ xX]\]\s+/.exec(line);
+      const prefixMatch = /^\s*[-*+]\s*\[[ xX]\]\s+/.exec(line);
       const textCh = prefixMatch ? prefixMatch[0].length : 0;
 
       out.push({
