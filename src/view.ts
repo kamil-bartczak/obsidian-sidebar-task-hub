@@ -13,7 +13,7 @@ import { t as tr } from "./i18n";
 
 export const VIEW_TYPE_TASK_HUB = "task-hub-view";
 
-type ViewMode = "files" | "tags";
+type ViewMode = "focus" | "files" | "tags";
 
 interface TaskItem {
   filePath: string;
@@ -37,11 +37,13 @@ export class TaskHubView extends ItemView {
   private showDone: boolean;
   private searchVisible = false;
   private viewMode: ViewMode = "files";
+  private activeFolder: string | null = null;
   private listEl!: HTMLElement;
   private searchWrapper!: HTMLElement;
   private collapsed = new Set<string>();
 
   // Navbar button references for toggling active state
+  private btnFocus!: HTMLElement;
   private btnFiles!: HTMLElement;
   private btnTags!: HTMLElement;
   private btnSearch!: HTMLElement;
@@ -75,6 +77,11 @@ export class TaskHubView extends ItemView {
     const navLeft = nav.createDiv({ cls: "task-hub-nav-group" });
     this.btnFiles = this.createNavBtn(navLeft, "list", tr("filesView"), () => {
       this.viewMode = "files";
+      this.updateNavState();
+      this.renderTaskList();
+    });
+    this.btnFocus = this.createNavBtn(navLeft, "folder-open", tr("focusView"), () => {
+      this.viewMode = "focus";
       this.updateNavState();
       this.renderTaskList();
     });
@@ -153,6 +160,21 @@ export class TaskHubView extends ItemView {
     this.registerEvent(this.app.vault.on("delete", debouncedRefresh));
     this.registerEvent(this.app.vault.on("rename", debouncedRefresh));
 
+    // Track active file for focus view
+    this.registerEvent(
+      this.app.workspace.on("active-leaf-change", () => {
+        const file = this.app.workspace.getActiveFile();
+        const folder = file ? this.topLevelFolder(file.path) : null;
+        if (folder !== this.activeFolder) {
+          this.activeFolder = folder;
+          if (this.viewMode === "focus") this.renderTaskList();
+        }
+      })
+    );
+    this.activeFolder = this.app.workspace.getActiveFile()
+      ? this.topLevelFolder(this.app.workspace.getActiveFile()!.path)
+      : null;
+
     await this.refresh();
   }
 
@@ -171,6 +193,7 @@ export class TaskHubView extends ItemView {
   }
 
   private updateNavState() {
+    this.btnFocus.toggleClass("is-active", this.viewMode === "focus");
     this.btnFiles.toggleClass("is-active", this.viewMode === "files");
     this.btnTags.toggleClass("is-active", this.viewMode === "tags");
     this.btnSearch.toggleClass("is-active", this.searchVisible);
@@ -286,11 +309,18 @@ export class TaskHubView extends ItemView {
       return;
     }
 
-    if (filtered.length > 0) {
+    // In focus mode, filter to the active folder only
+    const displayed = this.viewMode === "focus"
+      ? filtered.filter((t) => this.topLevelFolder(t.filePath) === (this.activeFolder ?? ""))
+      : filtered;
+
+    if (displayed.length > 0) {
       if (this.viewMode === "tags") {
-        this.renderTagView(filtered);
+        this.renderTagView(displayed);
+      } else if (this.viewMode === "focus") {
+        this.renderFocusView(displayed);
       } else {
-        this.renderFileView(filtered, false);
+        this.renderFileView(displayed, false);
       }
     } else if (hidden.length === 0) {
       this.renderEmpty();
@@ -340,6 +370,25 @@ export class TaskHubView extends ItemView {
   private topLevelFolder(filePath: string): string {
     const idx = filePath.indexOf("/");
     return idx === -1 ? "" : filePath.slice(0, idx);
+  }
+
+  // ── Focus view (active folder, no folder grouping) ─────────────────────
+  private renderFocusView(tasks: TaskItem[]) {
+    // Group by file directly (skip folder layer)
+    const fileOrder: string[] = [];
+    const byFile = new Map<string, TaskItem[]>();
+    for (const t of tasks) {
+      if (!byFile.has(t.filePath)) {
+        fileOrder.push(t.filePath);
+        byFile.set(t.filePath, []);
+      }
+      byFile.get(t.filePath)!.push(t);
+    }
+    fileOrder.sort((a, b) => a.localeCompare(b));
+
+    for (const filePath of fileOrder) {
+      this.renderFileGroup(this.listEl, filePath, byFile.get(filePath)!, false);
+    }
   }
 
   // ── File view (default) ─────────────────────────────────────────────────

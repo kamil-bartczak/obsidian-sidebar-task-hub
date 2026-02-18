@@ -1,6 +1,7 @@
 const strings = {
   en: {
     taskHub: "Task Hub",
+    focusView: "Active folder",
     filesView: "Files view",
     tagsView: "Tags view",
     toggleSearch: "Toggle search",
@@ -29,6 +30,7 @@ const strings = {
   },
   pl: {
     taskHub: "Task Hub",
+    focusView: "Aktywny folder",
     filesView: "Widok plików",
     tagsView: "Widok tagów",
     toggleSearch: "Przełącz wyszukiwanie",
@@ -57,6 +59,7 @@ const strings = {
   },
   de: {
     taskHub: "Task Hub",
+    focusView: "Aktiver Ordner",
     filesView: "Dateiansicht",
     tagsView: "Tag-Ansicht",
     toggleSearch: "Suche umschalten",
@@ -85,6 +88,7 @@ const strings = {
   },
   fr: {
     taskHub: "Task Hub",
+    focusView: "Dossier actif",
     filesView: "Vue fichiers",
     tagsView: "Vue tags",
     toggleSearch: "Basculer la recherche",
@@ -113,6 +117,7 @@ const strings = {
   },
   es: {
     taskHub: "Task Hub",
+    focusView: "Carpeta activa",
     filesView: "Vista de archivos",
     tagsView: "Vista de etiquetas",
     toggleSearch: "Alternar búsqueda",
@@ -141,6 +146,7 @@ const strings = {
   },
   pt: {
     taskHub: "Task Hub",
+    focusView: "Pasta ativa",
     filesView: "Vista de ficheiros",
     tagsView: "Vista de tags",
     toggleSearch: "Alternar pesquisa",
@@ -169,6 +175,7 @@ const strings = {
   },
   it: {
     taskHub: "Task Hub",
+    focusView: "Cartella attiva",
     filesView: "Vista file",
     tagsView: "Vista tag",
     toggleSearch: "Attiva/disattiva ricerca",
@@ -197,6 +204,7 @@ const strings = {
   },
   ru: {
     taskHub: "Task Hub",
+    focusView: "Активная папка",
     filesView: "По файлам",
     tagsView: "По тегам",
     toggleSearch: "Поиск",
@@ -225,6 +233,7 @@ const strings = {
   },
   uk: {
     taskHub: "Task Hub",
+    focusView: "Активна папка",
     filesView: "За файлами",
     tagsView: "За тегами",
     toggleSearch: "Пошук",
@@ -253,6 +262,7 @@ const strings = {
   },
   zh: {
     taskHub: "Task Hub",
+    focusView: "当前文件夹",
     filesView: "文件视图",
     tagsView: "标签视图",
     toggleSearch: "切换搜索",
@@ -279,6 +289,7 @@ const strings = {
   },
   ja: {
     taskHub: "Task Hub",
+    focusView: "アクティブフォルダ",
     filesView: "ファイル表示",
     tagsView: "タグ表示",
     toggleSearch: "検索の切替",
@@ -306,6 +317,7 @@ const strings = {
   },
   ko: {
     taskHub: "Task Hub",
+    focusView: "활성 폴더",
     filesView: "파일 보기",
     tagsView: "태그 보기",
     toggleSearch: "검색 전환",
@@ -333,6 +345,7 @@ const strings = {
   },
   ar: {
     taskHub: "Task Hub",
+    focusView: "المجلد النشط",
     filesView: "عرض الملفات",
     tagsView: "عرض الوسوم",
     toggleSearch: "تبديل البحث",
@@ -360,6 +373,7 @@ const strings = {
   },
   tr: {
     taskHub: "Task Hub",
+    focusView: "Aktif klasör",
     filesView: "Dosya görünümü",
     tagsView: "Etiket görünümü",
     toggleSearch: "Aramayı aç/kapat",

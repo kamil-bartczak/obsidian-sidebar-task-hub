@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0
+
+### New features
+
+- **Focus view (active folder)** — new view mode that dynamically shows only tasks from the folder of the currently open file. Automatically updates when switching files. Accessible via the folder-open icon in the navbar (between files and tags views).
+
 ## 1.3.0
 
 ### New features
