@@ -1,16 +1,23 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type SidebarTaskHubPlugin from "./main";
+import { t } from "./i18n";
 
 export interface TaskHubSettings {
   /** Folder paths (relative to vault root) to skip during scanning. One per entry. */
   excludedFolders: string[];
   /** Default state of the "Show completed" toggle when the view opens. */
   showDone: boolean;
+  /** File paths hidden from the main task list via context menu. */
+  hiddenFiles: string[];
+  /** Task identifiers hidden via context menu. Format: "filePath::taskText" */
+  hiddenTasks: string[];
 }
 
 export const DEFAULT_SETTINGS: TaskHubSettings = {
   excludedFolders: [],
   showDone: false,
+  hiddenFiles: [],
+  hiddenTasks: [],
 };
 
 export class TaskHubSettingTab extends PluginSettingTab {
@@ -24,16 +31,13 @@ export class TaskHubSettingTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "Sidebar Task Hub" });
+    containerEl.createEl("h2", { text: t("settingsTitle") });
 
     new Setting(containerEl)
-      .setName("Excluded folders")
-      .setDesc(
-        "One folder path per line (relative to vault root). " +
-          "Files inside these folders are skipped when scanning for tasks."
-      )
+      .setName(t("excludedFolders"))
+      .setDesc(t("excludedFoldersDesc"))
       .addTextArea((ta) => {
-        ta.setPlaceholder("Templates\nArchive\nDaily Notes")
+        ta.setPlaceholder(t("excludedFoldersPlaceholder"))
           .setValue(this.plugin.settings.excludedFolders.join("\n"))
           .onChange(async (value) => {
             this.plugin.settings.excludedFolders = value
@@ -48,8 +52,8 @@ export class TaskHubSettingTab extends PluginSettingTab {
       });
 
     new Setting(containerEl)
-      .setName("Show completed tasks by default")
-      .setDesc("Whether the 'Show completed' toggle is on when the panel first opens.")
+      .setName(t("showDoneDefault"))
+      .setDesc(t("showDoneDefaultDesc"))
       .addToggle((toggle) => {
         toggle
           .setValue(this.plugin.settings.showDone)

@@ -5,6 +5,7 @@ import {
   DEFAULT_SETTINGS,
   TaskHubSettingTab,
 } from "./settings";
+import { t } from "./i18n";
 
 export default class SidebarTaskHubPlugin extends Plugin {
   settings!: TaskHubSettings;
@@ -17,11 +18,11 @@ export default class SidebarTaskHubPlugin extends Plugin {
       (leaf) => new TaskHubView(leaf, this)
     );
 
-    this.addRibbonIcon("list-todo", "Task Hub", () => this.activateView());
+    this.addRibbonIcon("list-todo", t("taskHub"), () => this.activateView());
 
     this.addCommand({
       id: "open-task-hub-right",
-      name: "Open Task Hub (right sidebar)",
+      name: t("openTaskHub"),
       callback: () => this.activateView(),
     });
 
