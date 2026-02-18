@@ -23,6 +23,9 @@ const strings = {
     showDoneDefaultDesc:
       "Whether the 'Show completed' toggle is on when the panel first opens.",
     openTaskHub: "Open Task Hub (right sidebar)",
+    rootFolder: "Root",
+    hideFolder: "Hide this folder",
+    unhideFolder: "Unhide this folder",
   },
   pl: {
     taskHub: "Task Hub",
@@ -48,6 +51,9 @@ const strings = {
     showDoneDefaultDesc:
       "Czy przełącznik 'Pokaż ukończone' jest włączony przy otwarciu panelu.",
     openTaskHub: "Otwórz Task Hub (prawy panel)",
+    rootFolder: "Główny folder",
+    hideFolder: "Ukryj ten folder",
+    unhideFolder: "Pokaż ten folder",
   },
   de: {
     taskHub: "Task Hub",
@@ -73,6 +79,9 @@ const strings = {
     showDoneDefaultDesc:
       "Ob der Schalter 'Erledigte anzeigen' beim Öffnen des Panels aktiviert ist.",
     openTaskHub: "Task Hub öffnen (rechte Seitenleiste)",
+    rootFolder: "Stammordner",
+    hideFolder: "Ordner ausblenden",
+    unhideFolder: "Ordner einblenden",
   },
   fr: {
     taskHub: "Task Hub",
@@ -98,6 +107,9 @@ const strings = {
     showDoneDefaultDesc:
       "Si le bouton 'Afficher terminées' est activé à l'ouverture du panneau.",
     openTaskHub: "Ouvrir Task Hub (barre latérale droite)",
+    rootFolder: "Racine",
+    hideFolder: "Masquer ce dossier",
+    unhideFolder: "Afficher ce dossier",
   },
   es: {
     taskHub: "Task Hub",
@@ -123,6 +135,9 @@ const strings = {
     showDoneDefaultDesc:
       "Si el interruptor 'Mostrar completadas' está activado al abrir el panel.",
     openTaskHub: "Abrir Task Hub (barra lateral derecha)",
+    rootFolder: "Raíz",
+    hideFolder: "Ocultar esta carpeta",
+    unhideFolder: "Mostrar esta carpeta",
   },
   pt: {
     taskHub: "Task Hub",
@@ -148,6 +163,9 @@ const strings = {
     showDoneDefaultDesc:
       "Se o botão 'Mostrar concluídas' está ativado ao abrir o painel.",
     openTaskHub: "Abrir Task Hub (barra lateral direita)",
+    rootFolder: "Raiz",
+    hideFolder: "Ocultar esta pasta",
+    unhideFolder: "Mostrar esta pasta",
   },
   it: {
     taskHub: "Task Hub",
@@ -173,6 +191,9 @@ const strings = {
     showDoneDefaultDesc:
       "Se l'interruttore 'Mostra completate' è attivo all'apertura del pannello.",
     openTaskHub: "Apri Task Hub (barra laterale destra)",
+    rootFolder: "Radice",
+    hideFolder: "Nascondi questa cartella",
+    unhideFolder: "Mostra questa cartella",
   },
   ru: {
     taskHub: "Task Hub",
@@ -198,6 +219,9 @@ const strings = {
     showDoneDefaultDesc:
       "Включён ли переключатель 'Показать завершённые' при открытии панели.",
     openTaskHub: "Открыть Task Hub (правая панель)",
+    rootFolder: "Корневая папка",
+    hideFolder: "Скрыть папку",
+    unhideFolder: "Показать папку",
   },
   uk: {
     taskHub: "Task Hub",
@@ -223,6 +247,9 @@ const strings = {
     showDoneDefaultDesc:
       "Чи увімкнено перемикач 'Показати завершені' при відкритті панелі.",
     openTaskHub: "Відкрити Task Hub (права панель)",
+    rootFolder: "Коренева папка",
+    hideFolder: "Приховати папку",
+    unhideFolder: "Показати папку",
   },
   zh: {
     taskHub: "Task Hub",
@@ -246,6 +273,9 @@ const strings = {
     showDoneDefault: "默认显示已完成任务",
     showDoneDefaultDesc: "打开面板时「显示已完成」开关是否默认开启。",
     openTaskHub: "打开 Task Hub（右侧边栏）",
+    rootFolder: "根目录",
+    hideFolder: "隐藏此文件夹",
+    unhideFolder: "显示此文件夹",
   },
   ja: {
     taskHub: "Task Hub",
@@ -270,6 +300,9 @@ const strings = {
     showDoneDefault: "デフォルトで完了タスクを表示",
     showDoneDefaultDesc: "パネルを開いた時に「完了を表示」トグルがオンになるかどうか。",
     openTaskHub: "Task Hubを開く（右サイドバー）",
+    rootFolder: "ルート",
+    hideFolder: "このフォルダを非表示",
+    unhideFolder: "このフォルダを表示",
   },
   ko: {
     taskHub: "Task Hub",
@@ -294,6 +327,9 @@ const strings = {
     showDoneDefault: "기본적으로 완료된 작업 표시",
     showDoneDefaultDesc: "패널을 열 때 '완료 표시' 토글이 켜져 있는지 여부.",
     openTaskHub: "Task Hub 열기 (오른쪽 사이드바)",
+    rootFolder: "루트",
+    hideFolder: "이 폴더 숨기기",
+    unhideFolder: "이 폴더 표시",
   },
   ar: {
     taskHub: "Task Hub",
@@ -318,6 +354,9 @@ const strings = {
     showDoneDefault: "إظهار المهام المكتملة افتراضيًا",
     showDoneDefaultDesc: "ما إذا كان مفتاح 'إظهار المكتملة' مفعلاً عند فتح اللوحة.",
     openTaskHub: "فتح Task Hub (الشريط الجانبي الأيمن)",
+    rootFolder: "المجلد الرئيسي",
+    hideFolder: "إخفاء هذا المجلد",
+    unhideFolder: "إظهار هذا المجلد",
   },
   tr: {
     taskHub: "Task Hub",
@@ -343,6 +382,9 @@ const strings = {
     showDoneDefaultDesc:
       "Panel açıldığında 'Tamamlananları göster' düğmesinin açık olup olmadığı.",
     openTaskHub: "Task Hub'ı aç (sağ kenar çubuğu)",
+    rootFolder: "Kök klasör",
+    hideFolder: "Bu klasörü gizle",
+    unhideFolder: "Bu klasörü göster",
   },
 } as const;
 

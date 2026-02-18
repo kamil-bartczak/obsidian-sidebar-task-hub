@@ -11,6 +11,8 @@ export interface TaskHubSettings {
   hiddenFiles: string[];
   /** Task identifiers hidden via context menu. Format: "filePath::taskText" */
   hiddenTasks: string[];
+  /** Top-level folder names hidden via context menu. "" for vault root. */
+  hiddenFolders: string[];
 }
 
 export const DEFAULT_SETTINGS: TaskHubSettings = {
@@ -18,6 +20,7 @@ export const DEFAULT_SETTINGS: TaskHubSettings = {
   showDone: false,
   hiddenFiles: [],
   hiddenTasks: [],
+  hiddenFolders: [],
 };
 
 export class TaskHubSettingTab extends PluginSettingTab {

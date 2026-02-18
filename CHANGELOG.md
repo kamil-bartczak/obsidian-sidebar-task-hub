@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0
+
+### New features
+
+- **Folder grouping** — in file view, tasks are now grouped by top-level folder first, then by file and heading. Files in the vault root appear under a translated "Root" group. Only the first folder level is used (nested subfolders are flattened to the top-level parent).
+- **Hide/unhide folders** — right-click a folder group to hide or unhide it via context menu. Hidden folders move to the "Hidden" section.
+- **Hidden item indicators** — directly hidden items (folders, files, tasks) show an eye-off icon. Only directly hidden items offer "Unhide" in context menu — parent containers that appear in the hidden section due to their children don't show misleading unhide options.
+
 ## 1.1.1
 
 - Fix all ESLint errors (floating promises, unsafe assignments, direct style manipulation, detachLeaves, manual HTML headings in settings).

@@ -213,9 +213,10 @@ export class TaskHubView extends ItemView {
   private renderTaskList() {
     this.listEl.empty();
 
-    const { hiddenFiles, hiddenTasks } = this.plugin.settings;
+    const { hiddenFiles, hiddenTasks, hiddenFolders } = this.plugin.settings;
     const hiddenFileSet = new Set(hiddenFiles);
     const hiddenTaskSet = new Set(hiddenTasks);
+    const hiddenFolderSet = new Set(hiddenFolders);
 
     // Separate top-level tasks into visible vs hidden
     const visible: TaskItem[] = [];
@@ -224,7 +225,11 @@ export class TaskHubView extends ItemView {
     for (const t of this.tasks) {
       if (t.parentLine !== null) continue;
 
-      if (hiddenFileSet.has(t.filePath) || hiddenTaskSet.has(this.taskKey(t))) {
+      if (
+        hiddenFolderSet.has(this.topLevelFolder(t.filePath)) ||
+        hiddenFileSet.has(t.filePath) ||
+        hiddenTaskSet.has(this.taskKey(t))
+      ) {
         hidden.push(t);
         continue;
       }
@@ -296,6 +301,12 @@ export class TaskHubView extends ItemView {
     return { total, done };
   }
 
+  /** Extract the top-level folder from a file path, or "" for vault root */
+  private topLevelFolder(filePath: string): string {
+    const idx = filePath.indexOf("/");
+    return idx === -1 ? "" : filePath.slice(0, idx);
+  }
+
   // ── File view (default) ─────────────────────────────────────────────────
   private renderFileView(
     tasks: TaskItem[],
@@ -304,6 +315,99 @@ export class TaskHubView extends ItemView {
   ) {
     const container = parentEl ?? this.listEl;
 
+    // Group tasks by top-level folder
+    const folderOrder: string[] = [];
+    const byFolder = new Map<string, TaskItem[]>();
+    for (const t of tasks) {
+      const folder = this.topLevelFolder(t.filePath);
+      if (!byFolder.has(folder)) {
+        folderOrder.push(folder);
+        byFolder.set(folder, []);
+      }
+      byFolder.get(folder)!.push(t);
+    }
+    folderOrder.sort((a, b) => a.localeCompare(b));
+
+    for (const folder of folderOrder) {
+      const folderTasks = byFolder.get(folder)!;
+      this.renderFolderGroup(container, folder, folderTasks, isHidden);
+    }
+  }
+
+  // ── Folder-level collapsible ────────────────────────────────────────────
+  private renderFolderGroup(
+    container: HTMLElement,
+    folder: string,
+    tasks: TaskItem[],
+    isHidden: boolean,
+  ) {
+    const collapseKey = (isHidden ? "hidden:folder:" : "folder:") + (folder || "__root__");
+    const details = container.createEl("details", {
+      cls: "task-hub-folder-group",
+    });
+    if (!this.collapsed.has(collapseKey)) details.setAttr("open", "");
+
+    details.addEventListener("toggle", () => {
+      if (details.open) this.collapsed.delete(collapseKey);
+      else this.collapsed.add(collapseKey);
+    });
+
+    const summary = details.createEl("summary", {
+      cls: "task-hub-folder-summary",
+    });
+    setIcon(summary.createSpan({ cls: "task-hub-chevron" }), "chevron-right");
+    setIcon(summary.createSpan({ cls: "task-hub-folder-icon" }), "folder");
+
+    const folderName = folder || tr("rootFolder");
+    summary.createSpan({ cls: "task-hub-folder-name", text: folderName });
+
+    let totalCount = 0;
+    let doneCount = 0;
+    for (const t of tasks) {
+      const c = this.countSubtree(t);
+      totalCount += c.total;
+      doneCount += c.done;
+    }
+    const badge = summary.createSpan({ cls: "task-hub-badge" });
+    badge.setText(
+      doneCount > 0 ? `${doneCount}/${totalCount}` : String(totalCount)
+    );
+
+    // Eye-off indicator + context menu for directly hidden folders
+    const folderDirectlyHidden = isHidden &&
+      this.plugin.settings.hiddenFolders.includes(folder);
+
+    if (folderDirectlyHidden) {
+      setIcon(summary.createSpan({ cls: "task-hub-hidden-indicator" }), "eye-off");
+    }
+
+    summary.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      const menu = new Menu();
+      if (folderDirectlyHidden) {
+        menu.addItem((item) =>
+          item.setTitle(tr("unhideFolder")).setIcon("eye").onClick(async () => {
+            this.plugin.settings.hiddenFolders =
+              this.plugin.settings.hiddenFolders.filter((f) => f !== folder);
+            await this.plugin.saveSettings();
+          })
+        );
+      } else if (!isHidden) {
+        menu.addItem((item) =>
+          item.setTitle(tr("hideFolder")).setIcon("eye-off").onClick(async () => {
+            if (!this.plugin.settings.hiddenFolders.includes(folder)) {
+              this.plugin.settings.hiddenFolders.push(folder);
+            }
+            await this.plugin.saveSettings();
+          })
+        );
+      }
+      menu.showAtMouseEvent(e);
+    });
+
+    const body = details.createDiv({ cls: "task-hub-folder-body" });
+
+    // Group files within this folder
     const fileOrder: string[] = [];
     const byFile = new Map<string, TaskItem[]>();
     for (const t of tasks) {
@@ -316,7 +420,7 @@ export class TaskHubView extends ItemView {
     fileOrder.sort((a, b) => a.localeCompare(b));
 
     for (const filePath of fileOrder) {
-      this.renderFileGroup(container, filePath, byFile.get(filePath)!, isHidden);
+      this.renderFileGroup(body, filePath, byFile.get(filePath)!, isHidden);
     }
   }
 
@@ -359,8 +463,15 @@ export class TaskHubView extends ItemView {
       doneCount > 0 ? `${doneCount}/${totalCount}` : String(totalCount)
     );
 
-    // Context menu on file summary
-    this.addFileSummaryContextMenu(summary, filePath, isHidden);
+    // Eye-off indicator + context menu for files
+    const fileDirectlyHidden = isHidden &&
+      this.plugin.settings.hiddenFiles.includes(filePath);
+
+    if (fileDirectlyHidden) {
+      setIcon(summary.createSpan({ cls: "task-hub-hidden-indicator" }), "eye-off");
+    }
+
+    this.addFileSummaryContextMenu(summary, filePath, isHidden, fileDirectlyHidden);
 
     // Group by heading
     const headingOrder: Array<string | null> = [];
@@ -548,23 +659,28 @@ export class TaskHubView extends ItemView {
     this.renderTextWithTags(textEl, t.text);
     textEl.addEventListener("click", () => { void this.openAtTask(t); });
 
-    // Context menu
+    // Eye-off indicator + context menu for tasks
+    const taskDirectlyHidden = isHidden &&
+      this.plugin.settings.hiddenTasks.includes(this.taskKey(t));
+
+    if (taskDirectlyHidden) {
+      setIcon(li.createSpan({ cls: "task-hub-hidden-indicator" }), "eye-off");
+    }
+
     li.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       e.stopPropagation();
       const menu = new Menu();
-      if (isHidden) {
+      if (taskDirectlyHidden) {
         menu.addItem((item) =>
           item.setTitle(tr("unhideTask")).setIcon("eye").onClick(async () => {
             const key = this.taskKey(t);
             this.plugin.settings.hiddenTasks =
               this.plugin.settings.hiddenTasks.filter((k) => k !== key);
-            this.plugin.settings.hiddenFiles =
-              this.plugin.settings.hiddenFiles.filter((f) => f !== t.filePath);
             await this.plugin.saveSettings();
           })
         );
-      } else {
+      } else if (!isHidden) {
         menu.addItem((item) =>
           item.setTitle(tr("hideTask")).setIcon("eye-off").onClick(async () => {
             const key = this.taskKey(t);
@@ -599,11 +715,12 @@ export class TaskHubView extends ItemView {
     summary: HTMLElement,
     filePath: string,
     isHidden: boolean,
+    directlyHidden: boolean,
   ) {
     summary.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       const menu = new Menu();
-      if (isHidden) {
+      if (directlyHidden) {
         menu.addItem((item) =>
           item.setTitle(tr("unhideFile")).setIcon("eye").onClick(async () => {
             this.plugin.settings.hiddenFiles =
@@ -615,7 +732,7 @@ export class TaskHubView extends ItemView {
             await this.plugin.saveSettings();
           })
         );
-      } else {
+      } else if (!isHidden) {
         menu.addItem((item) =>
           item.setTitle(tr("hideFile")).setIcon("eye-off").onClick(async () => {
             if (!this.plugin.settings.hiddenFiles.includes(filePath)) {
