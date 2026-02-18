@@ -186,27 +186,58 @@ export class TaskHubView extends ItemView {
     return `${t.filePath}::${t.text}`;
   }
 
-  // ── Flatten a task tree into ordered list with depth ─────────────────────
-  private flattenTree(
-    tasks: TaskItem[],
-    depth: number,
-    parentDone: boolean,
-  ): Array<{ task: TaskItem; depth: number; parentDone: boolean }> {
-    const result: Array<{ task: TaskItem; depth: number; parentDone: boolean }> = [];
+  private filterChildren(children: TaskItem[], parentDone: boolean): TaskItem[] {
+    if (this.showDone || parentDone) return children;
+    return children.filter((c) => !c.done);
+  }
+
+  /**
+   * Collect top-level task "shells" that contain only hidden descendants.
+   * Preserves the parent hierarchy so the hidden section shows
+   * File → Parent Task → Hidden Subtask instead of File → Hidden Subtask.
+   */
+  private collectHiddenSubtaskTrees(tasks: TaskItem[], hiddenSet: Set<string>): TaskItem[] {
+    const pruneToHidden = (list: TaskItem[]): TaskItem[] => {
+      const result: TaskItem[] = [];
+      for (const t of list) {
+        if (hiddenSet.has(this.taskKey(t))) {
+          // This task is directly hidden — include it (no children needed)
+          result.push({ ...t, children: [], parentLine: t.parentLine });
+        } else {
+          // Check if any descendants are hidden
+          const hiddenChildren = pruneToHidden(t.children);
+          if (hiddenChildren.length > 0) {
+            result.push({ ...t, children: hiddenChildren, parentLine: t.parentLine });
+          }
+        }
+      }
+      return result;
+    };
+
+    const result: TaskItem[] = [];
     for (const t of tasks) {
-      result.push({ task: t, depth, parentDone });
-      if (t.children.length > 0) {
-        const effectiveDone = t.done || parentDone;
-        const children = this.filterChildren(t.children, effectiveDone);
-        result.push(...this.flattenTree(children, depth + 1, effectiveDone));
+      const hiddenChildren = pruneToHidden(t.children);
+      if (hiddenChildren.length > 0) {
+        // Create a shell of the top-level task with only hidden descendant branches
+        result.push({ ...t, children: hiddenChildren, parentLine: null });
       }
     }
     return result;
   }
 
-  private filterChildren(children: TaskItem[], parentDone: boolean): TaskItem[] {
-    if (this.showDone || parentDone) return children;
-    return children.filter((c) => !c.done);
+  /** Remove hidden subtasks from children arrays (recursive) */
+  private stripHiddenSubtasks(tasks: TaskItem[]): TaskItem[] {
+    const hiddenTaskSet = new Set(this.plugin.settings.hiddenTasks);
+    const strip = (list: TaskItem[]): TaskItem[] =>
+      list
+        .filter((t) => !hiddenTaskSet.has(this.taskKey(t)))
+        .map((t) => {
+          if (t.children.length === 0) return t;
+          const cleaned = strip(t.children);
+          if (cleaned.length === t.children.length) return t;
+          return { ...t, children: cleaned };
+        });
+    return strip(tasks);
   }
 
   // ── Main render dispatcher ──────────────────────────────────────────────
@@ -265,9 +296,13 @@ export class TaskHubView extends ItemView {
       this.renderEmpty();
     }
 
+    // Collect parent shells containing hidden subtasks (preserves hierarchy)
+    const hiddenSubtaskTrees = this.collectHiddenSubtaskTrees(visible, hiddenTaskSet);
+    const allHidden = [...hidden, ...hiddenSubtaskTrees];
+
     // Hidden section
-    if (hidden.length > 0) {
-      this.renderHiddenSection(hidden);
+    if (allHidden.length > 0) {
+      this.renderHiddenSection(allHidden);
     }
   }
 
@@ -614,17 +649,78 @@ export class TaskHubView extends ItemView {
     }
   }
 
-  // ── Flat task list (same <ul>, subtasks indented by depth) ───────────────
+  // ── Recursive task list (subtasks collapsible under parents) ─────────────
   private renderFlatTaskList(
     parent: HTMLElement,
     tasks: TaskItem[],
     isHidden: boolean,
   ) {
-    const flat = this.flattenTree(tasks, 0, false);
+    // Don't strip hidden subtasks in the hidden section — we want to show them there
+    const effective = isHidden ? tasks : this.stripHiddenSubtasks(tasks);
     const ul = parent.createEl("ul", { cls: "task-hub-items" });
+    this.renderTasksRecursive(ul, effective, 0, false, isHidden);
+  }
 
-    for (const { task, depth, parentDone } of flat) {
-      this.renderTaskLi(ul, task, depth, parentDone, isHidden);
+  private renderTasksRecursive(
+    ul: HTMLElement,
+    tasks: TaskItem[],
+    depth: number,
+    parentDone: boolean,
+    isHidden: boolean,
+  ) {
+    for (const t of tasks) {
+      const visibleChildren = this.filterChildren(t.children, t.done || parentDone);
+      if (visibleChildren.length > 0) {
+        // Collapsible parent task
+        const collapseKey = `task:${t.filePath}:${t.line}`;
+        const li = ul.createEl("li", {
+          cls: "task-hub-item task-hub-parent" +
+            (t.done ? " is-done" : "") +
+            (parentDone && !t.done ? " is-parent-done" : ""),
+        });
+        const details = li.createEl("details", { cls: "task-hub-subtask-group" });
+        if (!this.collapsed.has(collapseKey)) details.setAttr("open", "");
+        details.addEventListener("toggle", () => {
+          if (details.open) this.collapsed.delete(collapseKey);
+          else this.collapsed.add(collapseKey);
+        });
+
+        const summary = details.createEl("summary", { cls: "task-hub-subtask-summary" });
+        setIcon(summary.createSpan({ cls: "task-hub-chevron" }), "chevron-right");
+
+        // Checkbox
+        const checkEl = summary.createSpan({ cls: "task-hub-check" });
+        setIcon(checkEl, t.done ? "check-square" : "square");
+        checkEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          void this.toggleTask(t);
+        });
+
+        // Task text
+        const textEl = summary.createSpan({ cls: "task-hub-text" });
+        this.renderTextWithTags(textEl, t.text);
+        textEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          void this.openAtTask(t);
+        });
+
+        // Subtask count badge
+        const counts = this.countSubtree(t);
+        const childCount = counts.total - 1;
+        const childDone = counts.done - (t.done ? 1 : 0);
+        if (childCount > 0) {
+          const badge = summary.createSpan({ cls: "task-hub-badge" });
+          badge.setText(childDone > 0 ? `${childDone}/${childCount}` : String(childCount));
+        }
+
+        this.addTaskContextMenu(li, t, isHidden);
+
+        // Render children
+        const childUl = details.createEl("ul", { cls: "task-hub-items" });
+        this.renderTasksRecursive(childUl, visibleChildren, depth + 1, t.done || parentDone, isHidden);
+      } else {
+        this.renderTaskLi(ul, t, depth, parentDone, isHidden);
+      }
     }
   }
 
@@ -642,10 +738,6 @@ export class TaskHubView extends ItemView {
         (parentDone && !t.done ? " is-parent-done" : ""),
     });
 
-    if (depth > 0) {
-      li.addClass(`task-hub-depth-${Math.min(depth, 5)}`);
-    }
-
     // Checkbox
     const checkEl = li.createSpan({ cls: "task-hub-check" });
     setIcon(checkEl, t.done ? "check-square" : "square");
@@ -659,15 +751,18 @@ export class TaskHubView extends ItemView {
     this.renderTextWithTags(textEl, t.text);
     textEl.addEventListener("click", () => { void this.openAtTask(t); });
 
-    // Eye-off indicator + context menu for tasks
+    this.addTaskContextMenu(li, t, isHidden);
+  }
+
+  private addTaskContextMenu(el: HTMLElement, t: TaskItem, isHidden: boolean) {
     const taskDirectlyHidden = isHidden &&
       this.plugin.settings.hiddenTasks.includes(this.taskKey(t));
 
     if (taskDirectlyHidden) {
-      setIcon(li.createSpan({ cls: "task-hub-hidden-indicator" }), "eye-off");
+      setIcon(el.createSpan({ cls: "task-hub-hidden-indicator" }), "eye-off");
     }
 
-    li.addEventListener("contextmenu", (e) => {
+    el.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       e.stopPropagation();
       const menu = new Menu();

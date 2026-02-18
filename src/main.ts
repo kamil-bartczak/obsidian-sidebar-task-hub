@@ -3,7 +3,6 @@ import { TaskHubView, VIEW_TYPE_TASK_HUB } from "./view";
 import {
   TaskHubSettings,
   DEFAULT_SETTINGS,
-  TaskHubSettingTab,
 } from "./settings";
 import { t } from "./i18n";
 
@@ -25,8 +24,6 @@ export default class SidebarTaskHubPlugin extends Plugin {
       name: t("openTaskHub"),
       callback: () => this.activateView(),
     });
-
-    this.addSettingTab(new TaskHubSettingTab(this.app, this));
 
     this.app.workspace.onLayoutReady(() => this.activateView());
   }

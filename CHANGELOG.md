@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.3.0
+
+### New features
+
+- **Collapsible subtasks** — parent tasks with children now have a chevron toggle to collapse/expand their subtasks, consistent with folder and file groups.
+- **Subtask hiding** — hiding a subtask via context menu now works correctly. Hidden subtasks are removed from the visible tree and appear in the Hidden section with full parent hierarchy preserved.
+
+### Bug fixes
+
+- Fix subtask alignment — leaf tasks (without children) are now visually aligned with parent tasks that have a chevron.
+- Fix hidden section showing subtasks without parent context — hidden subtasks now display as File → Parent Task → Subtask instead of File → Subtask.
+
+### Removed
+
+- **Settings tab removed** — all controls are now in the sidebar navbar; the separate settings page is no longer needed.
+
 ## 1.2.0
 
 ### New features

@@ -5,12 +5,6 @@
   display: none;
 }
 
-/* Settings */
-.task-hub-textarea {
-  width: 100%;
-  resize: vertical;
-}
-
 .task-hub-root {
   display: flex;
   flex-direction: column;
@@ -299,10 +293,17 @@
   align-items: flex-start;
   gap: var(--size-2-2);
   padding: var(--size-2-1) var(--size-2-2);
+  /* Align leaf tasks with parent tasks that have a chevron (13px + gap) */
+  padding-left: calc(13px + var(--size-2-2) + var(--size-2-2));
   border-radius: var(--radius-s);
   cursor: pointer;
   font-size: var(--font-small);
   line-height: var(--line-height-normal);
+}
+
+/* Parent tasks with chevron don't need extra left padding */
+.task-hub-item.task-hub-parent {
+  padding-left: 0;
 }
 
 .task-hub-item:hover {
@@ -351,22 +352,65 @@
   line-height: 1.6;
 }
 
-/* ── Subtask depth indentation ──────────────────────────────────────────── */
+/* ── Collapsible subtask groups ─────────────────────────────────────────── */
 
-.task-hub-item.task-hub-depth-1 { padding-left: calc(var(--size-4-4) + var(--size-2-2)); }
-.task-hub-item.task-hub-depth-2 { padding-left: calc(var(--size-4-4) * 2 + var(--size-2-2)); }
-.task-hub-item.task-hub-depth-3 { padding-left: calc(var(--size-4-4) * 3 + var(--size-2-2)); }
-.task-hub-item.task-hub-depth-4 { padding-left: calc(var(--size-4-4) * 4 + var(--size-2-2)); }
-.task-hub-item.task-hub-depth-5 { padding-left: calc(var(--size-4-4) * 5 + var(--size-2-2)); }
+.task-hub-item.task-hub-parent:hover {
+  background: none;
+}
+
+.task-hub-subtask-group {
+  width: 100%;
+}
+
+.task-hub-subtask-group[open] > summary .task-hub-chevron {
+  transform: rotate(90deg);
+}
+
+.task-hub-subtask-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-2-2);
+  padding: var(--size-2-1) var(--size-2-2);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  font-size: var(--font-small);
+  line-height: var(--line-height-normal);
+}
+
+.task-hub-subtask-summary::-webkit-details-marker {
+  display: none;
+}
+
+.task-hub-subtask-summary:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* Children ul inside a collapsible parent — indented to align under parent text */
+.task-hub-subtask-group > .task-hub-items {
+  padding-left: calc(13px + var(--size-2-2));
+}
 
 /* ── Subtasks (parent-done styling) ─────────────────────────────────────── */
 
-.task-hub-item.is-parent-done .task-hub-text {
+.task-hub-item.is-done .task-hub-subtask-summary .task-hub-check {
+  color: var(--checkbox-color, var(--interactive-accent));
+}
+
+.task-hub-item.is-done .task-hub-subtask-summary .task-hub-text {
   text-decoration: line-through;
   color: var(--text-muted);
 }
 
-.task-hub-item.is-parent-done .task-hub-check {
+.task-hub-item.is-parent-done .task-hub-text,
+.task-hub-item.is-parent-done .task-hub-subtask-summary .task-hub-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-hub-item.is-parent-done .task-hub-check,
+.task-hub-item.is-parent-done .task-hub-subtask-summary .task-hub-check {
   color: var(--text-faint);
 }
 
