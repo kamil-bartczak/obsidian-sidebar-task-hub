@@ -52,3 +52,13 @@ Only `main.js`, `manifest.json`, and `styles.css` are needed. Never commit `main
 
 - **NEVER** add `Co-Authored-By` to commit messages.
 - Always run `npm run lint` before `npm run build`.
+
+## Development workflow
+
+When the user accepts implemented changes (features, bug fixes, refactors), finalize with these steps **in order**:
+
+1. **Lint & build** — run `npm run lint`, then `npm run build`. Fix any errors.
+2. **Bump version** — increment the version in `manifest.json` and add the new entry to `versions.json`. Use semver: patch for fixes, minor for features, major for breaking changes.
+3. **Update CHANGELOG.md** — add a new section at the top with the version number and a concise summary of changes.
+4. **Update new i18n strings** — if any new user-facing strings were added, add translations to `src/i18n.ts` for all supported languages.
+5. **Commit** — stage all changed files and create a single commit with a clear message. **Never** add `Co-Authored-By`.
