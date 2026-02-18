@@ -1,53 +1,76 @@
 # Sidebar Task Hub
 
-An [Obsidian](https://obsidian.md) plugin that collects every checkbox task from your vault into a right-sidebar panel — grouped by file and heading, filterable, and fully interactive.
+An [Obsidian](https://obsidian.md) plugin that collects every checkbox task from your vault into a right-sidebar panel — grouped by folder, file, and heading, with three view modes, subtask support, and full interactivity.
 
-![screenshot](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/master/docs/screenshot.png)
+---
+
+## Views
+
+### List view
+
+The default view groups tasks by **folder → file → heading** with collapsible sections at every level. Subtasks are nested under their parent with a chevron toggle.
+
+![List view](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/master/docs/list-view.png)
+
+### Focus view
+
+Shows only tasks from the **folder of the currently open file**. The view updates automatically when you switch to a file in a different folder. No folder grouping — just files and headings.
+
+![Focus view](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/master/docs/folder-view.png)
+
+### Tag view
+
+Groups all tasks by their `#tags`. Tasks with multiple tags appear under each tag. Untagged tasks are collected in a separate group.
+
+![Tag view](https://raw.githubusercontent.com/kamil-bartczak/obsidian-sidebar-task-hub/master/docs/tag-view.png)
 
 ---
 
 ## Features
 
-- **Vault-wide task view** — scans all Markdown files and surfaces every `- [ ]` and `- [x]` item in one place
-- **Grouped by file → heading** — tasks are organized under the last heading they appear below, with collapsible sections at both levels
-- **Toggle done without leaving the panel** — click the checkbox icon to mark a task complete (or un-complete) directly in the panel; the file is updated instantly
-- **Click to navigate** — click the task text to open the file and place the cursor exactly on that line
-- **Live filter** — type in the search box to filter by task text, file name, or heading
+- **Vault-wide task scanning** — finds every checkbox task (`- [ ]`, `* [ ]`, `+ [ ]`) across all Markdown files
+- **Three view modes** — list (folder → file → heading), focus (active folder), and tag grouping
+- **Subtask support** — indented tasks are displayed as collapsible subtasks with correct hierarchy
+- **Tag pills** — `#tags` in task text are rendered as styled pill badges
+- **Toggle done in-place** — click the checkbox to mark a task complete or incomplete; the file updates instantly
+- **Click to navigate** — click any task text to open the file and jump to the exact line
+- **Live search** — filter by task text, file name, heading, or tag
+- **Hide tasks, files, and folders** — right-click to hide items; hidden items are collected in a collapsible section at the bottom with unhide support
 - **Collapsed state is remembered** — expand/collapse groups and the state survives re-scans
-- **Excluded folders** — configure folders to skip (e.g. `Templates`, `Archive`) so the scan stays fast and noise-free
+- **Smart done filtering** — done parent tasks with undone subtasks stay visible when "show completed" is off
+- **Internationalization** — 14 languages auto-detected from browser locale (EN, PL, DE, FR, ES, PT, IT, RU, UK, ZH, JA, KO, AR, TR)
 - **Theme-native styling** — uses Obsidian CSS variables; works with any community theme, light or dark
-- **Mobile-compatible** — `isDesktopOnly: false`
+- **Mobile-compatible** — works on both desktop and mobile
 
 ---
 
 ## Usage
 
-Once enabled, the panel opens automatically in the **right sidebar** with the `list-todo` icon. You can also open it via:
+Once enabled, the panel opens automatically in the **right sidebar**. You can also open it via:
 
-- The ribbon icon (top-right of the sidebar)
+- The ribbon icon (left sidebar, `list-todo` icon)
 - Command palette: **Open Task Hub (right sidebar)**
 
-### Panel controls
+### Navbar
 
-| Control | Action |
+| Button | Action |
 |---|---|
-| Search box | Filter tasks by text, file name, or heading |
-| Show completed toggle | Include / hide `[x]` tasks |
-| ▶ File header | Collapse / expand all tasks from that file |
-| ▶ Heading | Collapse / expand tasks under that heading |
-| Checkbox icon | Toggle the task done state in-place |
-| Task text | Open the file and jump to the exact line |
+| List icon | Switch to list view (folder → file → heading) |
+| Folder icon | Switch to focus view (active folder only) |
+| Tag icon | Switch to tag view (grouped by #tags) |
+| Search icon | Toggle the search/filter input |
+| Check-circle icon | Toggle visibility of completed tasks |
 
----
+### Interactions
 
-## Settings
-
-Go to **Settings → Community plugins → Sidebar Task Hub**.
-
-| Setting | Description |
+| Action | Result |
 |---|---|
-| **Excluded folders** | One folder path per line (e.g. `Templates`). Files inside are skipped during scanning. |
-| **Show completed by default** | Whether the "Show completed" toggle starts enabled when the panel opens. |
+| Click checkbox | Toggle the task done/undone in the source file |
+| Click task text | Open the file and jump to the exact line |
+| Click chevron (▶) | Collapse/expand a group or parent task |
+| Right-click task | Hide/unhide the task |
+| Right-click file header | Hide/unhide the file |
+| Right-click folder header | Hide/unhide the folder |
 
 ---
 
