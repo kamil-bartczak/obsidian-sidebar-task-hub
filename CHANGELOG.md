@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.1
+
+### Bug fixes
+
+- Fix done parent tasks with undone subtasks disappearing when "show completed" is off.
+- Fix undone subtasks inheriting done styling (strikethrough, accent checkbox) from their parent.
+
 ## 1.4.0
 
 ### New features

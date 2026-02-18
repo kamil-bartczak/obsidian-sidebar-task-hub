@@ -287,7 +287,7 @@ export class TaskHubView extends ItemView {
         hidden.push(t);
         continue;
       }
-      if (!this.showDone && t.done) continue;
+      if (!this.showDone && t.done && !this.hasUndoneDescendant(t)) continue;
       visible.push(t);
     }
 
@@ -364,6 +364,13 @@ export class TaskHubView extends ItemView {
       done += c.done;
     }
     return { total, done };
+  }
+
+  private hasUndoneDescendant(t: TaskItem): boolean {
+    for (const child of t.children) {
+      if (!child.done || this.hasUndoneDescendant(child)) return true;
+    }
+    return false;
   }
 
   /** Extract the top-level folder from a file path, or "" for vault root */
@@ -725,7 +732,7 @@ export class TaskHubView extends ItemView {
         const li = ul.createEl("li", {
           cls: "task-hub-item task-hub-parent" +
             (t.done ? " is-done" : "") +
-            (parentDone && !t.done ? " is-parent-done" : ""),
+            "",
         });
         const details = li.createEl("details", { cls: "task-hub-subtask-group" });
         if (!this.collapsed.has(collapseKey)) details.setAttr("open", "");

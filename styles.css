@@ -323,11 +323,12 @@
   height: 14px;
 }
 
-.task-hub-item.is-done .task-hub-check {
+/* Done styling — direct children only, not descendants (subtasks have their own state) */
+.task-hub-item.is-done > .task-hub-check {
   color: var(--checkbox-color, var(--interactive-accent));
 }
 
-.task-hub-item.is-done .task-hub-text {
+.task-hub-item.is-done > .task-hub-text {
   text-decoration: line-through;
   color: var(--text-muted);
 }
@@ -401,17 +402,6 @@
 .task-hub-item.is-done .task-hub-subtask-summary .task-hub-text {
   text-decoration: line-through;
   color: var(--text-muted);
-}
-
-.task-hub-item.is-parent-done .task-hub-text,
-.task-hub-item.is-parent-done .task-hub-subtask-summary .task-hub-text {
-  text-decoration: line-through;
-  color: var(--text-muted);
-}
-
-.task-hub-item.is-parent-done .task-hub-check,
-.task-hub-item.is-parent-done .task-hub-subtask-summary .task-hub-check {
-  color: var(--text-faint);
 }
 
 /* ── Hidden section ────────────────────────────────────────────────────── */
