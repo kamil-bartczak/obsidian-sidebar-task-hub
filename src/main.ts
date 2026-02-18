@@ -31,12 +31,8 @@ export default class SidebarTaskHubPlugin extends Plugin {
     this.app.workspace.onLayoutReady(() => this.activateView());
   }
 
-  onunload() {
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE_TASK_HUB);
-  }
-
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<TaskHubSettings>);
   }
 
   async saveSettings() {
@@ -53,7 +49,7 @@ export default class SidebarTaskHubPlugin extends Plugin {
     const existingLeaf =
       this.app.workspace.getLeavesOfType(VIEW_TYPE_TASK_HUB)[0];
     if (existingLeaf) {
-      this.app.workspace.revealLeaf(existingLeaf);
+      await this.app.workspace.revealLeaf(existingLeaf);
       return;
     }
 
@@ -61,6 +57,6 @@ export default class SidebarTaskHubPlugin extends Plugin {
     if (!leaf) return;
 
     await leaf.setViewState({ type: VIEW_TYPE_TASK_HUB, active: true });
-    this.app.workspace.revealLeaf(leaf);
+    await this.app.workspace.revealLeaf(leaf);
   }
 }

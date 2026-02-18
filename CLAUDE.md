@@ -11,7 +11,7 @@ npm run build        # Type-check + production build (minified main.js)
 npm run lint         # Run ESLint across src/
 ```
 
-**After every code change, always run `npm run build` and fix any errors before considering the task done.**
+**After every code change, always run `npm run lint` first, then `npm run build`, and fix all errors before considering the task done.**
 
 There is no automated test suite. Manual testing requires copying `main.js`, `manifest.json`, and `styles.css` to `<Vault>/.obsidian/plugins/sidebar-task-hub/`, then reloading Obsidian and enabling the plugin under **Settings → Community plugins**.
 
@@ -22,7 +22,9 @@ This is an Obsidian community plugin. TypeScript source in `src/` is bundled by 
 ### Source files
 
 - **`src/main.ts`** — Plugin entry point. Registers the view type, ribbon icon, and the `open-task-hub-right` command. Should stay minimal; delegate all feature logic to other modules.
-- **`src/view.ts`** — Contains `TaskHubView` (extends Obsidian's `ItemView`) and the standalone `scanAllTasks()` function. Handles all state (task list, filter text, show-done toggle), vault file watchers, UI rendering, and navigation to task locations.
+- **`src/view.ts`** — Contains `TaskHubView` (extends Obsidian's `ItemView`) and the standalone `scanAllTasks()` function. Handles all state (task list, filter text, show-done toggle, view mode, hiding), vault file watchers, UI rendering, and navigation to task locations.
+- **`src/i18n.ts`** — Internationalization module. Exports `t(key)` for translated strings. Auto-detects locale from `navigator.language`. Supports 14 languages.
+- **`src/settings.ts`** — `TaskHubSettings` interface and settings tab. Includes `excludedFolders`, `showDone`, `hiddenFiles`, and `hiddenTasks`.
 
 ### Data flow
 
@@ -45,3 +47,8 @@ This is an Obsidian community plugin. TypeScript source in `src/` is bundled by 
 ### Release artifacts
 
 Only `main.js`, `manifest.json`, and `styles.css` are needed. Never commit `main.js` or `node_modules/` (both in `.gitignore`). To release: bump version in `manifest.json` and `versions.json` (or run `npm version`), then attach the three artifacts to a GitHub release tagged with the bare version number (no `v` prefix).
+
+### Git conventions
+
+- **NEVER** add `Co-Authored-By` to commit messages.
+- Always run `npm run lint` before `npm run build`.

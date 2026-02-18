@@ -1,5 +1,16 @@
 /* ── Sidebar Task Hub ───────────────────────────────────────────────────── */
 
+/* Utility */
+.task-hub-root .is-hidden {
+  display: none;
+}
+
+/* Settings */
+.task-hub-textarea {
+  width: 100%;
+  resize: vertical;
+}
+
 .task-hub-root {
   display: flex;
   flex-direction: column;
@@ -285,6 +296,14 @@
   vertical-align: baseline;
   line-height: 1.6;
 }
+
+/* ── Subtask depth indentation ──────────────────────────────────────────── */
+
+.task-hub-item.task-hub-depth-1 { padding-left: calc(var(--size-4-4) + var(--size-2-2)); }
+.task-hub-item.task-hub-depth-2 { padding-left: calc(var(--size-4-4) * 2 + var(--size-2-2)); }
+.task-hub-item.task-hub-depth-3 { padding-left: calc(var(--size-4-4) * 3 + var(--size-2-2)); }
+.task-hub-item.task-hub-depth-4 { padding-left: calc(var(--size-4-4) * 4 + var(--size-2-2)); }
+.task-hub-item.task-hub-depth-5 { padding-left: calc(var(--size-4-4) * 5 + var(--size-2-2)); }
 
 /* ── Subtasks (parent-done styling) ─────────────────────────────────────── */
 

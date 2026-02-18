@@ -31,7 +31,7 @@ export class TaskHubSettingTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: t("settingsTitle") });
+    new Setting(containerEl).setName(t("settingsTitle")).setHeading();
 
     new Setting(containerEl)
       .setName(t("excludedFolders"))
@@ -47,8 +47,7 @@ export class TaskHubSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
         ta.inputEl.rows = 6;
-        ta.inputEl.style.width = "100%";
-        ta.inputEl.style.resize = "vertical";
+        ta.inputEl.addClass("task-hub-textarea");
       });
 
     new Setting(containerEl)

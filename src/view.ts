@@ -87,14 +87,14 @@ export class TaskHubView extends ItemView {
     const navRight = nav.createDiv({ cls: "task-hub-nav-group" });
     this.btnSearch = this.createNavBtn(navRight, "search", tr("toggleSearch"), () => {
       this.searchVisible = !this.searchVisible;
-      this.searchWrapper.style.display = this.searchVisible ? "" : "none";
+      this.searchWrapper.toggleClass("is-hidden", !this.searchVisible);
       this.updateNavState();
       if (this.searchVisible) {
-        const input = this.searchWrapper.querySelector("input");
-        if (input) (input as HTMLInputElement).focus();
+        const input = this.searchWrapper.querySelector<HTMLInputElement>("input");
+        if (input) input.focus();
       } else {
         this.filterText = "";
-        const input = this.searchWrapper.querySelector("input") as HTMLInputElement | null;
+        const input = this.searchWrapper.querySelector<HTMLInputElement>("input");
         if (input) input.value = "";
         this.renderTaskList();
       }
@@ -116,7 +116,7 @@ export class TaskHubView extends ItemView {
     this.searchWrapper = container.createDiv({
       cls: "task-hub-controls",
     });
-    this.searchWrapper.style.display = "none";
+    this.searchWrapper.addClass("is-hidden");
 
     const searchContainer = this.searchWrapper.createDiv({
       cls: "search-input-container",
@@ -128,18 +128,18 @@ export class TaskHubView extends ItemView {
     const clearBtn = searchContainer.createDiv({
       cls: "search-input-clear-button",
     });
-    clearBtn.style.display = "none";
+    clearBtn.addClass("is-hidden");
 
     filterInput.addEventListener("input", () => {
       this.filterText = filterInput.value;
-      clearBtn.style.display = this.filterText ? "" : "none";
+      clearBtn.toggleClass("is-hidden", !this.filterText);
       this.renderTaskList();
     });
 
     clearBtn.addEventListener("click", () => {
       this.filterText = "";
       filterInput.value = "";
-      clearBtn.style.display = "none";
+      clearBtn.addClass("is-hidden");
       this.renderTaskList();
     });
 
@@ -532,7 +532,7 @@ export class TaskHubView extends ItemView {
     });
 
     if (depth > 0) {
-      li.style.paddingLeft = `calc(var(--size-4-4) * ${depth} + var(--size-2-2))`;
+      li.addClass(`task-hub-depth-${Math.min(depth, 5)}`);
     }
 
     // Checkbox
@@ -540,13 +540,13 @@ export class TaskHubView extends ItemView {
     setIcon(checkEl, t.done ? "check-square" : "square");
     checkEl.addEventListener("click", (e) => {
       e.stopPropagation();
-      this.toggleTask(t);
+      void this.toggleTask(t);
     });
 
     // Task text with tag pills
     const textEl = li.createSpan({ cls: "task-hub-text" });
     this.renderTextWithTags(textEl, t.text);
-    textEl.addEventListener("click", () => this.openAtTask(t));
+    textEl.addEventListener("click", () => { void this.openAtTask(t); });
 
     // Context menu
     li.addEventListener("contextmenu", (e) => {

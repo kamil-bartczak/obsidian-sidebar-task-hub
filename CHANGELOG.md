@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1
+
+- Fix all ESLint errors (floating promises, unsafe assignments, direct style manipulation, detachLeaves, manual HTML headings in settings).
+- Use CSS classes instead of inline `style.display` and `style.paddingLeft`.
+- Remove `onunload` detachLeaves per Obsidian guidelines.
+
 ## 1.1.0
 
 ### New features

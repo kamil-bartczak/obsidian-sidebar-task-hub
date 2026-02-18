@@ -79,8 +79,8 @@ git clone https://github.com/kamil-bartczak/obsidian-sidebar-task-hub
 cd obsidian-sidebar-task-hub
 npm install
 npm run dev      # watch mode
+npm run lint     # ESLint (always run before build)
 npm run build    # type-check + production build
-npm run lint     # ESLint
 ```
 
 Copy `main.js`, `manifest.json`, and `styles.css` to your vault's plugin folder to test.
